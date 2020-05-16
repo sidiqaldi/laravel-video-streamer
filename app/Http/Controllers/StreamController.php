@@ -11,8 +11,8 @@ class StreamController extends Controller
     public function index(Request $request)
     {
         $streamToken = Str::random(20);
-        // $filename = 'bigs.mp4';
-        $filename = 'small.mp4';
+        $filename = 'bigs.mp4';
+        // $filename = 'small.mp4';
 
         $request->session()->put($streamToken, $filename);
 
@@ -21,7 +21,7 @@ class StreamController extends Controller
 
     public function stream(Request $request, $filename) 
     {
-        $filename = $request->session()->pull($filename, null);
+        $filename = $request->session()->get($filename, null);
 
         if (!$filename) {
             abort(404);
