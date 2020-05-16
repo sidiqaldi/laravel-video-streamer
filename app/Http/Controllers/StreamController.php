@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Raju\Streamer\Helpers\VideoStream;
 
 class StreamController extends Controller
 {
     public function index(Request $request)
     {
-        $streamToken = Str::random(20);
         $filename = 'bigs.mp4';
+
+        $streamToken = md5($filename);
 
         $request->session()->put($streamToken, $filename);
 
