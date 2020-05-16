@@ -12,15 +12,18 @@ class StreamController extends Controller
     {
         $streamToken = Str::random(20);
         $filename = 'bigs.mp4';
-        // $filename = 'small.mp4';
 
         $request->session()->put($streamToken, $filename);
 
         return view('welcome', compact('streamToken'));
     }
 
-    public function stream(Request $request, $filename) 
+    public function stream(Request $request, $filename)
     {
+        if (!$request->server('HTTP_RANGE') || $request->server('HTTP_UPGRADE_INSECURE_REQUESTS')) {
+            abort(404);
+        }
+
         $filename = $request->session()->get($filename, null);
 
         if (!$filename) {
@@ -29,9 +32,9 @@ class StreamController extends Controller
 
         $videosDir = config('larastreamer.basepath');
 
-        if (file_exists($filePath = $videosDir."/".$filename)) {
+        if (file_exists($filePath = $videosDir . "/" . $filename)) {
             $stream = new VideoStream($filePath);
-            return response()->stream(function() use ($stream) {
+            return response()->stream(function () use ($stream) {
                 $stream->start();
             });
         }
